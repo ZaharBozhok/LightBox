@@ -12,7 +12,7 @@
 #define PWD_EEPROM_ADDR 34
 
 #define MULTIPLIER 8
-#define REGISTERS 8
+#define REGISTERS 4
 #define SHIFT_REGISTERS REGISTERS*MULTIPLIER
 uint8_t ledData[REGISTERS] = { 0 };
 
@@ -21,7 +21,7 @@ ShiftRegister74HC595 shift_resiters(
   REGISTERS,  //Shift registers amount
   13,         //Serial data pin
   14,         //Clock pin
-  12);        //Latch pin
+  12);        //Latch pin=
 
 void handleRoot();
 String loadStringFromEEPROM(int addr);
@@ -136,7 +136,7 @@ void handleConfigs()
   {
     String response = String(R"({"accessPoint":")")
     +loadStringFromEEPROM(SSID_EEPROM_ADDR)
-    +R"(","password":")"
+    +R"(","password":")" 
     +loadStringFromEEPROM(PWD_EEPROM_ADDR)
     +R"(","mac":")"
     +WiFi.macAddress()
@@ -152,10 +152,11 @@ void handleConfigs()
     saveStringToEEPROM(ssid,SSID_EEPROM_ADDR);
     saveStringToEEPROM(password,PWD_EEPROM_ADDR);
     String reboot = server.arg("reboot");
+    server.send(200);
     if(reboot == "true")
       ESP.restart();
     }
-    server.send(200);
+    
   }
 
 void handleControl()
